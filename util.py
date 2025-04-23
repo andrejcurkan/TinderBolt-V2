@@ -16,14 +16,17 @@ def dialog_user_info_to_str(user) -> str:
 
 
 # посылает в чат текстовое сообщение
-async def send_text(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str) -> Message:
-    if text.count('_') % 2 != 0:
+async def send_text(update: Update, context: ContextTypes.DEFAULT_TYPE, text: str, parse_mode=ParseMode.MARKDOWN) -> Message:
+    """
+    Отправка текста в чат с поддержкой Markdown или HTML
+    """
+    if parse_mode == ParseMode.MARKDOWN and text.count('_') % 2 != 0:
         message = f"Строка '{text}' является невалидной с точки зрения markdown. Воспользуйтесь методом send_html()"
         print(message)
         return await update.message.reply_text(message)
 
     text = text.encode('utf16', errors='surrogatepass').decode('utf16')
-    return await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode=ParseMode.MARKDOWN)
+    return await context.bot.send_message(chat_id=update.effective_chat.id, text=text, parse_mode=parse_mode)
 
 
 # посылает в чат html сообщение
